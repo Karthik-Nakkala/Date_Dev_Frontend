@@ -1,11 +1,12 @@
+import Header from "./components/Header"
 
 function App() {
 
   return (
-    <>
-      <h1>Hello World😤😤😤😤😤</h1>
-    </>
+    <body className="bg-[#070B18]">
+      <Header/>
+    </body>
   )
 }
 
-export default App
+export default App;
