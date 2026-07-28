@@ -3,13 +3,15 @@ import {
   FiPlus,
   FiBell,
   FiMenu,
-  FiChevronDown,
 } from "react-icons/fi";
 import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { PiLightningFill } from "react-icons/pi";
+import { useSelector } from "react-redux";
 
 
 const Header=()=>{
+    const user=useSelector((store)=>store.user);
+    console.log('user=>',user);
     return (
         <header className="w-full h-20 bg-[#070B18] border  flex items-center justify-between">
    
@@ -69,10 +71,6 @@ const Header=()=>{
            </button>
            
    
-           {/* Add Button */}
-           <button className="hidden lg:flex w-12 h-11 rounded-xl bg-[#1A1235] items-center justify-center text-white hover:bg-[#26184D] transition">
-             <FiPlus size={22} />
-           </button>
    
            {/* Messages */}
            <button className="hidden lg:flex relative w-12 h-11 rounded-xl border border-[#2A2E45] items-center justify-center hover:bg-[#10172C] transition">
@@ -112,15 +110,16 @@ const Header=()=>{
            {/* Profile */}
            <button className="hidden lg:flex items-center gap-2">
    
-             <img
-               src="https://i.pravatar.cc/100"
+             {user && <img
+               src={user?.photoUrl}
                alt="profile"
                className="w-10 h-10 rounded-full object-cover"
-             />
+             />}
    
-             <span className="text-white text-md font-medium">
-               Karthik
-             </span>
+             {user && <span className="text-white text-md font-medium">
+               {user?.firstName}
+             </span>}
+             {!user && <span className="text-white text-md font-medium"><b>Login</b></span>}
    
              {/* <FiChevronDown className="text-gray-400 text-xl" /> */}
            </button>
