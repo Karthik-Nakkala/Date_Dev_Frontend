@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../store/slices/userSlice";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../utils/constants";
 
 
 
@@ -25,18 +26,17 @@ const LoginCard = () => {
 
     const dispatch=useDispatch();
 
-
     const navigate=useNavigate();
 
     const handleSubmit=async (e)=>{
       e.preventDefault();
       try{
-        const user=await axios.post("http://localhost:7777/login",{
+        const user=await axios.post(BASE_URL+"/login",{
         "emailId":emailId,
         "password": password,
       },{withCredentials:true});
         dispatch(addUser(user.data));
-        navigate('/profile');
+        navigate('/feed');
     }catch(err){
       console.log("Error=> ",err);
     }

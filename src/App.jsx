@@ -11,7 +11,7 @@ function App() {
        <BrowserRouter basename="/">
         <Routes>
           <Route path="/" element={<Body/>}>
-          <Route path="/profile" element={<DeveloperCardStack developers={developers}/>}></Route>
+          <Route path="/feed" element={<DeveloperCardStack developers={developers}/>}></Route>
           </Route>
           <Route path="/login" element={<Login/>}/>
           

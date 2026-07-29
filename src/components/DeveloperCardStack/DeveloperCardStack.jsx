@@ -1,19 +1,24 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { motion, useAnimation, useMotionValue, useTransform } from "framer-motion";
+import {
+  motion,
+  useAnimation,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 import { Sparkles, SlidersHorizontal, MoreVertical } from "lucide-react";
 import DeveloperCard from "./DeveloperCard";
 import SwipeButtons from "./SwipeButtons";
 import defaultDevelopers from "./data";
-import { 
-  SPRING, 
-  SNAP_BACK_SPRING, 
-  CARD_STACK, 
-  cardVariants, 
-  SWIPE_THRESHOLD, 
-  SWIPE_Y_THRESHOLD, 
-  SWIPE_VELOCITY_THRESHOLD, 
-  EXIT_X, 
-  EXIT_Y 
+import {
+  SPRING,
+  SNAP_BACK_SPRING,
+  CARD_STACK,
+  cardVariants,
+  SWIPE_THRESHOLD,
+  SWIPE_Y_THRESHOLD,
+  SWIPE_VELOCITY_THRESHOLD,
+  EXIT_X,
+  EXIT_Y,
 } from "./animations";
 
 const DeveloperCardStack = ({
@@ -43,38 +48,49 @@ const DeveloperCardStack = ({
   const y = useMotionValue(0);
 
   // Single unified method to finalize swipe state transition
-  const finalizeSwipe = useCallback((direction) => {
-    const currentDev = devList[currentIndex % devList.length];
-    setHistory((prev) => [...prev, { developer: currentDev, direction, index: currentIndex }]);
+  const finalizeSwipe = useCallback(
+    (direction) => {
+      const currentDev = devList[currentIndex % devList.length];
+      setHistory((prev) => [
+        ...prev,
+        { developer: currentDev, direction, index: currentIndex },
+      ]);
 
-    if (direction === "right" && onConnect) onConnect(currentDev);
-    if (direction === "left" && onIgnore) onIgnore(currentDev);
-    if (direction === "up" && onSuperLike) onSuperLike(currentDev);
+      if (direction === "right" && onConnect) onConnect(currentDev);
+      if (direction === "left" && onIgnore) onIgnore(currentDev);
+      if (direction === "up" && onSuperLike) onSuperLike(currentDev);
 
-    setSwipeDirection(direction);
-    setCurrentIndex((prev) => prev + 1);
-  }, [devList, currentIndex, onConnect, onIgnore, onSuperLike]);
+      setSwipeDirection(direction);
+      setCurrentIndex((prev) => prev + 1);
+    },
+    [devList, currentIndex, onConnect, onIgnore, onSuperLike],
+  );
 
   // Programmatic swipe handler (used by action buttons & keyboard shortcuts)
-  const triggerSwipe = useCallback(async (direction) => {
-    const targetX = direction === "right" ? EXIT_X : direction === "left" ? -EXIT_X : 0;
-    const targetY = direction === "up" ? EXIT_Y : 0;
-    const targetRotate = direction === "right" ? 25 : direction === "left" ? -25 : 0;
-    const targetScale = direction === "up" ? 0.85 : 1;
+  const triggerSwipe = useCallback(
+    async (direction) => {
+      const targetX =
+        direction === "right" ? EXIT_X : direction === "left" ? -EXIT_X : 0;
+      const targetY = direction === "up" ? EXIT_Y : 0;
+      const targetRotate =
+        direction === "right" ? 25 : direction === "left" ? -25 : 0;
+      const targetScale = direction === "up" ? 0.85 : 1;
 
-    setSwipeDirection(direction);
+      setSwipeDirection(direction);
 
-    await topCardControls.start({
-      x: targetX,
-      y: targetY,
-      rotate: targetRotate,
-      scale: targetScale,
-      opacity: 0,
-      transition: { duration: 0.3, ease: "easeOut" },
-    });
+      await topCardControls.start({
+        x: targetX,
+        y: targetY,
+        rotate: targetRotate,
+        scale: targetScale,
+        opacity: 0,
+        transition: { duration: 0.3, ease: "easeOut" },
+      });
 
-    finalizeSwipe(direction);
-  }, [topCardControls, finalizeSwipe]);
+      finalizeSwipe(direction);
+    },
+    [topCardControls, finalizeSwipe],
+  );
 
   // Handle Undo functionality
   const handleUndo = useCallback(async () => {
@@ -86,9 +102,15 @@ const DeveloperCardStack = ({
     setHistory((prev) => prev.slice(0, -1));
     setSwipeDirection(lastDirection);
 
-    const startX = lastDirection === "right" ? EXIT_X : lastDirection === "left" ? -EXIT_X : 0;
+    const startX =
+      lastDirection === "right"
+        ? EXIT_X
+        : lastDirection === "left"
+          ? -EXIT_X
+          : 0;
     const startY = lastDirection === "up" ? EXIT_Y : 0;
-    const startRotate = lastDirection === "right" ? 25 : lastDirection === "left" ? -25 : 0;
+    const startRotate =
+      lastDirection === "right" ? 25 : lastDirection === "left" ? -25 : 0;
 
     topCardControls.set({
       x: startX,
@@ -189,34 +211,6 @@ const DeveloperCardStack = ({
 
   return (
     <section className="w-full select-none max-w-[1200px] mx-auto px-4 py-4 sm:py-6">
-      {/* Header and Title Section */}
-      <div className="flex items-center justify-between mb-6 sm:mb-8">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-violet-600/15 border border-violet-500/20 text-violet-400">
-            <Sparkles className="w-5 h-5 fill-current" />
-          </div>
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Discover Developers
-            </h2>
-            <p className="mt-0.5 text-xs sm:text-sm text-gray-400 font-medium">
-              Swipe to connect, collaborate, and grow together!
-            </p>
-          </div>
-        </div>
-
-        {/* Right Action Controls */}
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 rounded-xl border border-white/10 bg-[#161B33]/80 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-gray-300 hover:bg-[#1E254A] transition active:scale-95 cursor-pointer">
-            <SlidersHorizontal className="w-4 h-4 text-gray-400" />
-            <span>Filters</span>
-          </button>
-          <button className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-white/10 bg-[#161B33]/80 text-gray-300 hover:bg-[#1E254A] transition active:scale-95 cursor-pointer">
-            <MoreVertical className="w-4 h-4 text-gray-400" />
-          </button>
-        </div>
-      </div>
-
       {/* Cards Stack Container */}
       <div className="relative mx-auto w-full max-w-[360px] sm:max-w-[390px] lg:max-w-[780px] h-[580px] sm:h-[620px] lg:h-[420px]">
         {/* Back Card (Index 2 in stack) */}
