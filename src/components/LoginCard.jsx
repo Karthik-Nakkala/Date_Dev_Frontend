@@ -1,46 +1,43 @@
 import InputField from "./InputField";
 import SocialButton from "./SocialButton";
-import axios from 'axios';
+import axios from "axios";
 
-import {
-  FiMail,
-  FiLock,
-} from "react-icons/fi";
+import { FiMail, FiLock } from "react-icons/fi";
 
-import {
-  FaGithub,
-  FaDiscord,
-  FaGoogle,
-} from "react-icons/fa";
+import { FaGithub, FaDiscord, FaGoogle } from "react-icons/fa";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addUser } from "../store/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
 
-
-
 const LoginCard = () => {
-    const [emailId,setEmailId]=useState("saaho.wadha@wadha.com");
-    const [password,setPassword]=useState("Undercover@777");
+  const [emailId, setEmailId] = useState("saaho.wadha@wadha.com");
+  const [password, setPassword] = useState("Undercover@777");
+  const [error,setError]=useState("");
 
-    const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
-    const navigate=useNavigate();
+  const navigate = useNavigate();
 
-    const handleSubmit=async (e)=>{
-      e.preventDefault();
-      try{
-        const user=await axios.post(BASE_URL+"/login",{
-        "emailId":emailId,
-        "password": password,
-      },{withCredentials:true});
-        dispatch(addUser(user.data));
-        navigate('/feed');
-    }catch(err){
-      console.log("Error=> ",err);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const user = await axios.post(
+        BASE_URL + "/login",
+        {
+          emailId: emailId,
+          password: password,
+        },
+        { withCredentials: true },
+
+      );
+      dispatch(addUser(user.data));
+      navigate('/');
+    } catch (err) {
+      setError(err?.response?.data?.message);
     }
-    }
+  };
   return (
     <div
       className="
@@ -62,9 +59,7 @@ const LoginCard = () => {
     >
       {/* Heading */}
 
-      <div className="text-2xl lg:text-3xl font-bold">
-        Welcome Back 👋
-      </div>
+      <div className="text-2xl lg:text-3xl font-bold">Welcome Back 👋</div>
 
       <p className="text-gray-400 mt-2 text-sm ">
         Login to continue to Date_Dev
@@ -73,7 +68,6 @@ const LoginCard = () => {
       {/* Form */}
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-
         <InputField
           label="Email address"
           placeholder="Enter your email"
@@ -83,8 +77,6 @@ const LoginCard = () => {
           setField={setEmailId}
           autoComplete="email"
         />
-
-       
 
         <InputField
           label="Password"
@@ -97,19 +89,14 @@ const LoginCard = () => {
           autoComplete="current-password"
         />
 
+        <p className="text-red-600">{error}</p>
+
         {/* Remember */}
 
         <div className="flex items-center gap-2">
+          <input type="checkbox" className="accent-violet-600 w-4 h-4" />
 
-          <input
-            type="checkbox"
-            className="accent-violet-600 w-4 h-4"
-          />
-
-          <span className="text-gray-300">
-            Remember me
-          </span>
-
+          <span className="text-gray-300">Remember me</span>
         </div>
 
         {/* Login */}
@@ -136,55 +123,34 @@ const LoginCard = () => {
         >
           Login
         </button>
-
       </form>
 
       {/* Divider */}
 
       <div className="flex items-center gap-5 my-5">
-
         <div className="h-px flex-1 bg-[#2B3048]" />
 
-        <span className="text-gray-500">
-          or continue with
-        </span>
+        <span className="text-gray-500">or continue with</span>
 
         <div className="h-px flex-1 bg-[#2B3048]" />
-
       </div>
 
       {/* Social */}
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <SocialButton icon={<FaGithub />} text="GitHub" />
 
-        <SocialButton
-          icon={<FaGithub />}
-          text="GitHub"
-        />
+        <SocialButton icon={<FaGoogle />} text="Google" />
 
-        <SocialButton
-          icon={<FaGoogle />}
-          text="Google"
-        />
-
-        <SocialButton
-          icon={<FaDiscord />}
-          text="Discord"
-        />
-
+        <SocialButton icon={<FaDiscord />} text="Discord" />
       </div>
 
       {/* Terms */}
 
       <p className="text-gray-500 mt-4 leading-5 text-xs md:text-sm">
         By continuing, you agree to our{" "}
-        <span className="text-violet-400">
-          Terms of Service
-        </span>{" "}
-        and{" "}
-        <span className="text-violet-400">
-          Privacy Policy
-        </span>
+        <span className="text-violet-400">Terms of Service</span> and{" "}
+        <span className="text-violet-400">Privacy Policy</span>
       </p>
     </div>
   );

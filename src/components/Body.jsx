@@ -17,7 +17,6 @@ const Body = () => {
         withCredentials: true,
       });
       dispatch(addUser(user.data));
-      console.log("Profile=>", user.data);
     } catch (err) {
       if (err.status == 401) {
         navigate("/login");

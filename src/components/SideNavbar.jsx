@@ -1,6 +1,25 @@
 import { X, User, Eye, Settings, LogOut } from "lucide-react";
+import axios from "axios";
+import { BASE_URL } from "../utils/constants";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { removeUser } from "../store/slices/userSlice";
 
 const ProfileDrawer = ({ isOpen, setIsOpen }) => {
+  const dispatch=useDispatch();
+  const navigate=useNavigate();
+  const handleLogOut = async () => {
+    try {
+      await axios.post(BASE_URL+'/logout',{},{
+        withCredentials:true
+      });
+      dispatch(removeUser());
+      navigate('/login');
+    } catch (err){
+      //redirect to error page
+      console.log("====>",err);
+    }
+  };
   return (
     <>
       {/* Backdrop */}
@@ -36,7 +55,6 @@ const ProfileDrawer = ({ isOpen, setIsOpen }) => {
             <span>Profile</span>
           </button>
 
-
           <button className="mt-2 flex w-full items-center gap-4 rounded-xl px-4 py-3 text-gray-300 transition hover:bg-violet-600/20 hover:text-violet-400">
             <Settings size={20} />
             <span>Settings</span>
@@ -44,7 +62,10 @@ const ProfileDrawer = ({ isOpen, setIsOpen }) => {
 
           <div className="my-5 border-t border-white/10" />
 
-          <button className="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-red-400 transition hover:bg-red-500/15">
+          <button
+            className="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-red-400 transition hover:bg-red-500/15"
+            onClick={() => handleLogOut()}
+          >
             <LogOut size={20} />
             <span>Logout</span>
           </button>

@@ -8,7 +8,7 @@ import ProfileDrawer from "./SideNavbar";
 
 const Header = () => {
   const user = useSelector((store) => store.user);
-  const [profileDrawerOpen,setProfileDrawerOpen]=useState(false);
+  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
   return (
     <header className="w-full h-20 bg-[#070B18] border  flex items-center justify-between">
       {/* Left Section */}
@@ -80,8 +80,10 @@ const Header = () => {
 
         {/* Profile */}
         <Link to={"/feed"}>
-          <button className="flex items-center gap-2 cursor-pointer" 
-          onClick={()=>setProfileDrawerOpen(!profileDrawerOpen)}>
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}
+          >
             {user && (
               <img
                 src={user?.photoUrl}
@@ -95,21 +97,20 @@ const Header = () => {
                 {user?.firstName}
               </span>
             )}
-            {!user && (
-              <span className="text-white text-md font-medium">
-                <Link to={"/login"}>
-                  <b>Login</b>
-                </Link>
-              </span>
-            )}
-            
+
             <ProfileDrawer
-            isOpen={profileDrawerOpen} 
-            setIsOpen={setProfileDrawerOpen}
+              isOpen={profileDrawerOpen}
+              setIsOpen={setProfileDrawerOpen}
             />
-            
-          </button>
+          </div>
         </Link>
+        {!user && (
+          <span className="text-white text-md font-medium">
+            <Link to={"/login"}>
+              <b>Login</b>
+            </Link>
+          </span>
+        )}
       </div>
     </header>
   );
