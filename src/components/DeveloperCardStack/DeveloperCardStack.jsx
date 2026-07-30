@@ -1,18 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import {
-  motion,
-  useAnimation,
-  useMotionValue,
-  useTransform,
-} from "framer-motion";
-import { Sparkles, SlidersHorizontal, MoreVertical } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, useAnimation, useMotionValue } from "framer-motion";
 import DeveloperCard from "./DeveloperCard";
 import SwipeButtons from "./SwipeButtons";
-import defaultDevelopers from "./data";
 import {
   SPRING,
   SNAP_BACK_SPRING,
-  CARD_STACK,
   cardVariants,
   SWIPE_THRESHOLD,
   SWIPE_Y_THRESHOLD,
@@ -20,27 +12,25 @@ import {
   EXIT_X,
   EXIT_Y,
 } from "./animations";
+import axios from "axios";
+import { BASE_URL } from "../../utils/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { addDevs } from "../../store/slices/feedSlice";
+import TopInteractiveCard from "./TopInteractiveCard";
 
 const DeveloperCardStack = ({
-  developers = defaultDevelopers,
   onConnect,
   onIgnore,
   onSuperLike,
   onUndo,
   onBoost,
 }) => {
-  const devList = useMemo(() => {
-    return developers && developers.length > 0 ? developers : defaultDevelopers;
-  }, [developers]);
-
+  const [developers, setDevelopers] = useState([]);
+  const dispatch = useDispatch();
+  const storedDevs = useSelector((store) => store.feed);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [history, setHistory] = useState([]);
   const [swipeDirection, setSwipeDirection] = useState(null);
-
-  // Derive top, middle, and back cards dynamically
-  const topDev = devList[currentIndex % devList.length];
-  const middleDev = devList[(currentIndex + 1) % devList.length];
-  const backDev = devList[(currentIndex + 2) % devList.length];
 
   // Motion controls and values for top card interactive layer
   const topCardControls = useAnimation();
@@ -50,7 +40,7 @@ const DeveloperCardStack = ({
   // Single unified method to finalize swipe state transition
   const finalizeSwipe = useCallback(
     (direction) => {
-      const currentDev = devList[currentIndex % devList.length];
+      const currentDev = developers[currentIndex % developers?.length];
       setHistory((prev) => [
         ...prev,
         { developer: currentDev, direction, index: currentIndex },
@@ -63,7 +53,7 @@ const DeveloperCardStack = ({
       setSwipeDirection(direction);
       setCurrentIndex((prev) => prev + 1);
     },
-    [devList, currentIndex, onConnect, onIgnore, onSuperLike],
+    [developers, currentIndex, onConnect, onIgnore, onSuperLike],
   );
 
   // Programmatic swipe handler (used by action buttons & keyboard shortcuts)
@@ -161,6 +151,41 @@ const DeveloperCardStack = ({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [triggerSwipe, handleUndo]);
+
+  const fetchDevelopers = async () => {
+    if (storedDevs?.length > 0) {
+      setDevelopers(storedDevs);
+      return;
+    }
+    try {
+      const devs = await axios.get(BASE_URL + "/user/feed", {
+        withCredentials: true,
+      });
+      setDevelopers(devs?.data?.feedUsers);
+      dispatch(addDevs(devs?.data?.feedUsers));
+    } catch (err) {
+      //handle error logic
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchDevelopers();
+  }, []);
+
+  if (!developers.length) {
+    return (
+      <div className="flex h-[600px] items-center justify-center text-white">
+        Loading developers...
+      </div>
+    );
+  }
+
+  // Derive top, middle, and back cards dynamically
+  const topDev = developers[currentIndex % developers?.length];
+  console.log("TopCard=>",topDev);
+  const middleDev = developers[(currentIndex + 1) % developers?.length];
+  const backDev = developers[(currentIndex + 2) % developers?.length];
 
   // Drag End handler for touch & mouse drag gestures
   const handleDragEnd = async (event, info) => {
@@ -294,63 +319,5 @@ const DeveloperCardStack = ({
     </section>
   );
 };
-
-// Top Interactive Card layer with drag gesture & dynamic overlays
-function TopInteractiveCard({ developer, controls, x, y, onDragEnd }) {
-  const rotate = useTransform(x, [-300, 300], [-18, 18]);
-  const scale = useTransform(x, [-300, 0, 300], [1.02, 1, 1.02]);
-
-  // Dynamic Opacities based on drag distance
-  const opacityConnect = useTransform(x, [15, 120], [0, 1]);
-  const opacityIgnore = useTransform(x, [-120, -15], [1, 0]);
-  const opacitySuperLike = useTransform(y, [-120, -20], [1, 0]);
-
-  return (
-    <motion.div
-      style={{ x, y, rotate, scale, zIndex: 30 }}
-      drag
-      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-      dragElastic={0.9}
-      onDragEnd={onDragEnd}
-      animate={controls}
-      initial={{ scale: 1, y: 0, opacity: 1 }}
-      transition={SPRING}
-      className="absolute inset-0 cursor-grab active:cursor-grabbing touch-none"
-    >
-      <DeveloperCard developer={developer} />
-
-      {/* Swipe Overlays */}
-      {/* Connect Overlay (Green) */}
-      <motion.div
-        style={{ opacity: opacityConnect }}
-        className="absolute inset-0 z-40 bg-emerald-500/15 pointer-events-none rounded-[28px] flex items-center justify-center border-4 border-emerald-400/60"
-      >
-        <div className="text-emerald-400 text-3xl sm:text-5xl font-black uppercase tracking-widest border-4 sm:border-8 border-emerald-400 px-6 sm:px-8 py-2.5 sm:py-3 rounded-2xl rotate-[-12deg] bg-black/60 shadow-2xl backdrop-blur-sm">
-          Connect
-        </div>
-      </motion.div>
-
-      {/* Ignore Overlay (Red) */}
-      <motion.div
-        style={{ opacity: opacityIgnore }}
-        className="absolute inset-0 z-40 bg-rose-500/15 pointer-events-none rounded-[28px] flex items-center justify-center border-4 border-rose-500/60"
-      >
-        <div className="text-rose-500 text-3xl sm:text-5xl font-black uppercase tracking-widest border-4 sm:border-8 border-rose-500 px-6 sm:px-8 py-2.5 sm:py-3 rounded-2xl rotate-[12deg] bg-black/60 shadow-2xl backdrop-blur-sm">
-          Ignore
-        </div>
-      </motion.div>
-
-      {/* Super Like Overlay (Purple/Blue) */}
-      <motion.div
-        style={{ opacity: opacitySuperLike }}
-        className="absolute inset-0 z-40 bg-violet-500/15 pointer-events-none rounded-[28px] flex items-center justify-center border-4 border-violet-400/60"
-      >
-        <div className="text-violet-400 text-3xl sm:text-5xl font-black uppercase tracking-widest border-4 sm:border-8 border-violet-400 px-6 sm:px-8 py-2.5 sm:py-3 rounded-2xl rotate-0 -translate-y-4 bg-black/60 shadow-2xl backdrop-blur-sm">
-          Super Like
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
 
 export default DeveloperCardStack;

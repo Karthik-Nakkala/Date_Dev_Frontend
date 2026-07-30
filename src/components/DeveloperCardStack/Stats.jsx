@@ -7,7 +7,7 @@ const Stats = ({ developer }) => {
   return (
     <>
       {/* Desktop Stats */}
-      <div className="hidden lg:grid grid-cols-3 border-t border-white/10 pt-5 mt-auto">
+      <div className="hidden lg:grid grid-cols-3 border-t border-white/10 pt-2 mt-auto">
         <div className="text-center">
           <div className="flex justify-center items-center gap-2 text-violet-400 text-xl">
             <FiUsers className="w-5 h-5" />
