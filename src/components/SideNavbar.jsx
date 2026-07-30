@@ -4,20 +4,25 @@ import { BASE_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { removeUser } from "../store/slices/userSlice";
+import { Link } from "react-router-dom";
 
 const ProfileDrawer = ({ isOpen, setIsOpen }) => {
-  const dispatch=useDispatch();
-  const navigate=useNavigate();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleLogOut = async () => {
     try {
-      await axios.post(BASE_URL+'/logout',{},{
-        withCredentials:true
-      });
+      await axios.post(
+        BASE_URL + "/logout",
+        {},
+        {
+          withCredentials: true,
+        },
+      );
       dispatch(removeUser());
-      navigate('/login');
-    } catch (err){
+      navigate("/login");
+    } catch (err) {
       //redirect to error page
-      console.log("====>",err);
+      console.log("====>", err);
     }
   };
   return (
@@ -49,11 +54,16 @@ const ProfileDrawer = ({ isOpen, setIsOpen }) => {
         </div>
 
         {/* Menu */}
+
         <div className="mt-4 px-3">
-          <button className="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-gray-300 transition hover:bg-violet-600/20 hover:text-violet-400">
-            <User size={20} />
-            <span>Profile</span>
-          </button>
+          <Link to={'/profile'}>
+          
+            <button className="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-gray-300 transition hover:bg-violet-600/20 hover:text-violet-400">
+              <User size={20} />
+              <span>Profile</span>
+            </button>
+            </Link>
+
 
           <button className="mt-2 flex w-full items-center gap-4 rounded-xl px-4 py-3 text-gray-300 transition hover:bg-violet-600/20 hover:text-violet-400">
             <Settings size={20} />

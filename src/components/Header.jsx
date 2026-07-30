@@ -68,18 +68,19 @@ const Header = () => {
         </button>
 
         {/* Notifications */}
-        <button className="relative w-12 h-11 rounded-xl lg:border border-[#2A2E45] flex items-center justify-center hover:bg-[#10172C] transition">
-          <FiBell size={30} lg:size={22} className="text-white" />
+        <Link to={'/feed'}>
+          <button className="relative w-12 h-11 rounded-xl lg:border border-[#2A2E45] flex items-center justify-center hover:bg-[#10172C] transition">
+            <FiBell size={30} lg:size={22} className="text-white" />
 
-          <span className="lg:hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-pink-600 text-[10px] text-white items-center justify-center font-semibold" />
+            <span className="lg:hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-pink-600 text-[10px] text-white items-center justify-center font-semibold" />
 
-          <span className="hidden lg:flex absolute -top-1 -right-1 w-4 h-4 rounded-full bg-pink-600 text-[10px] text-white items-center justify-center font-semibold">
-            8
-          </span>
-        </button>
+            <span className="hidden lg:flex absolute -top-1 -right-1 w-4 h-4 rounded-full bg-pink-600 text-[10px] text-white items-center justify-center font-semibold">
+              8
+            </span>
+          </button>
+        </Link>
 
         {/* Profile */}
-        <Link to={"/feed"}>
           <div
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}
@@ -103,7 +104,6 @@ const Header = () => {
               setIsOpen={setProfileDrawerOpen}
             />
           </div>
-        </Link>
         {!user && (
           <span className="text-white text-md font-medium">
             <Link to={"/login"}>
