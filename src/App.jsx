@@ -3,6 +3,7 @@ import Body from "./components/Body";
 import Login from "./pages/Login";
 import DeveloperCardStack from './components/DeveloperCardStack/DeveloperCardStack';
 import developers from "./utils/dummyDevs";
+import Profile from "./components/Profile";
 
 function App() {
 
@@ -11,7 +12,8 @@ function App() {
        <BrowserRouter basename="/">
         <Routes>
           <Route path="/" element={<Body/>}>
-          <Route path="/feed" element={<DeveloperCardStack developers={developers}/>}></Route>
+          <Route path="/feed" element={<DeveloperCardStack/>}></Route>
+          <Route path="/profile" element={<Profile/>}></Route>
           </Route>
           <Route path="/login" element={<Login/>}/>
           
