@@ -3,7 +3,9 @@ import Body from "./components/Body";
 import Login from "./pages/Login";
 import DeveloperCardStack from './components/DeveloperCardStack/DeveloperCardStack';
 import developers from "./utils/dummyDevs";
-import Profile from "./components/Profile";
+import Profile from "./components/Profile/Profile";
+import EditDeveloperProfileModal from "./components/Profile/EditDeveloperProfileModal";
+import Connections from "./components/Connections";
 
 function App() {
 
@@ -14,6 +16,8 @@ function App() {
           <Route path="/" element={<Body/>}>
           <Route path="/feed" element={<DeveloperCardStack/>}></Route>
           <Route path="/profile" element={<Profile/>}></Route>
+          <Route path="/profile-edit" element={<EditDeveloperProfileModal/>}></Route>
+          <Route path="/connections" element={<Connections/>}></Route>
           </Route>
           <Route path="/login" element={<Login/>}/>
           

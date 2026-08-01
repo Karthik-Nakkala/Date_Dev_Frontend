@@ -59,13 +59,13 @@ const Header = () => {
       {/* Right Section */}
       <div className="flex items-center gap-5 px-6">
         {/* Messages */}
-        <button className="hidden lg:flex relative w-12 h-11 rounded-xl border border-[#2A2E45] items-center justify-center hover:bg-[#10172C] transition">
+        <Link to={'/connections'}><button className="hidden lg:flex relative w-12 h-11 rounded-xl border border-[#2A2E45] items-center justify-center hover:bg-[#10172C] transition">
           <HiOutlineChatBubbleLeftRight size={22} className="text-white" />
 
           <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-pink-600 text-[10px] text-white flex items-center justify-center font-semibold">
             2
           </span>
-        </button>
+        </button></Link>
 
         {/* Notifications */}
         <Link to={'/feed'}>
