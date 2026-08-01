@@ -6,6 +6,7 @@ import developers from "./utils/dummyDevs";
 import Profile from "./components/Profile/Profile";
 import EditDeveloperProfileModal from "./components/Profile/EditDeveloperProfileModal";
 import Connections from "./components/Connections";
+import ConnectionRequests from "./components/ConnectionRequests";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/profile" element={<Profile/>}></Route>
           <Route path="/profile-edit" element={<EditDeveloperProfileModal/>}></Route>
           <Route path="/connections" element={<Connections/>}></Route>
+          <Route path="/requests" element={<ConnectionRequests/>}></Route>
           </Route>
           <Route path="/login" element={<Login/>}/>
           
