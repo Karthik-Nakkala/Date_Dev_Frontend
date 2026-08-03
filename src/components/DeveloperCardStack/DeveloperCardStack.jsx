@@ -15,50 +15,71 @@ import {
 import axios from "axios";
 import { BASE_URL } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addDevs } from "../../store/slices/feedSlice";
+import { addDevs, removeDev } from "../../store/slices/feedSlice";
 import TopInteractiveCard from "./TopInteractiveCard";
 
-const DeveloperCardStack = ({
-  onConnect,
-  onIgnore,
-  onSuperLike,
-  onUndo,
-  onBoost,
-}) => {
-  const [developers, setDevelopers] = useState([]);
+const DeveloperCardStack = () => {
+  const developers = useSelector((store) => store.feed);
   const dispatch = useDispatch();
-  const storedDevs = useSelector((store) => store.feed);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [history, setHistory] = useState([]);
   const [swipeDirection, setSwipeDirection] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Motion controls and values for top card interactive layer
   const topCardControls = useAnimation();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
+  // Derive top, middle, and back cards directly from array front
+  const topDev = developers?.[0];
+  const middleDev = developers?.[1];
+  const backDev = developers?.[2];
+
+  // Reset top card position whenever top developer ID changes
+  useEffect(() => {
+    x.set(0);
+    y.set(0);
+    topCardControls.set({ x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 });
+  }, [topDev?._id, x, y, topCardControls]);
+
   // Single unified method to finalize swipe state transition
   const finalizeSwipe = useCallback(
-    (direction) => {
-      const currentDev = developers[currentIndex % developers?.length];
-      setHistory((prev) => [
-        ...prev,
-        { developer: currentDev, direction, index: currentIndex },
-      ]);
+    async (direction) => {
+      const currentDev = developers[0];
 
-      if (direction === "right" && onConnect) onConnect(currentDev);
-      if (direction === "left" && onIgnore) onIgnore(currentDev);
-      if (direction === "up" && onSuperLike) onSuperLike(currentDev);
+      if (!currentDev?._id) return;
+
+      let status = null;
+
+      if (direction === "right") status = "interested";
+      if (direction === "left") status = "ignored";
 
       setSwipeDirection(direction);
-      setCurrentIndex((prev) => prev + 1);
+
+      if (["interested", "ignored"].includes(status)) {
+        try {
+          await axios.post(
+            BASE_URL + "/request/send/" + status + "/" + currentDev._id,
+            {},
+            {
+              withCredentials: true,
+            },
+          );
+        } catch (err) {
+          console.log(err);
+        }
+      }
+
+      // Remove swiped developer from Redux state so developers[0] becomes the next developer
+      dispatch(removeDev(currentDev._id));
     },
-    [developers, currentIndex, onConnect, onIgnore, onSuperLike],
+    [developers, dispatch],
   );
 
   // Programmatic swipe handler (used by action buttons & keyboard shortcuts)
   const triggerSwipe = useCallback(
     async (direction) => {
+      if (!developers[0]) return;
+
       const targetX =
         direction === "right" ? EXIT_X : direction === "left" ? -EXIT_X : 0;
       const targetY = direction === "up" ? EXIT_Y : 0;
@@ -74,66 +95,13 @@ const DeveloperCardStack = ({
         rotate: targetRotate,
         scale: targetScale,
         opacity: 0,
-        transition: { duration: 0.3, ease: "easeOut" },
+        transition: { duration: 0.25, ease: "easeOut" },
       });
 
       finalizeSwipe(direction);
     },
-    [topCardControls, finalizeSwipe],
+    [developers, topCardControls, finalizeSwipe],
   );
-
-  // Handle Undo functionality
-  const handleUndo = useCallback(async () => {
-    if (history.length === 0) return;
-    const lastAction = history[history.length - 1];
-    const prevIndex = lastAction.index;
-    const lastDirection = lastAction.direction;
-
-    setHistory((prev) => prev.slice(0, -1));
-    setSwipeDirection(lastDirection);
-
-    const startX =
-      lastDirection === "right"
-        ? EXIT_X
-        : lastDirection === "left"
-          ? -EXIT_X
-          : 0;
-    const startY = lastDirection === "up" ? EXIT_Y : 0;
-    const startRotate =
-      lastDirection === "right" ? 25 : lastDirection === "left" ? -25 : 0;
-
-    topCardControls.set({
-      x: startX,
-      y: startY,
-      rotate: startRotate,
-      opacity: 0,
-      scale: 0.9,
-    });
-
-    setCurrentIndex(prevIndex);
-    if (onUndo) onUndo(lastAction.developer);
-
-    topCardControls.start({
-      x: 0,
-      y: 0,
-      rotate: 0,
-      opacity: 1,
-      scale: 1,
-      transition: SPRING,
-    });
-  }, [history, topCardControls, onUndo]);
-
-  // Handle Boost action
-  const handleBoost = useCallback(() => {
-    if (onBoost) onBoost();
-  }, [onBoost]);
-
-  // Reset top card position whenever index changes
-  useEffect(() => {
-    x.set(0);
-    y.set(0);
-    topCardControls.set({ x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 });
-  }, [currentIndex, x, y, topCardControls]);
 
   // Bind keyboard navigation shortcuts
   useEffect(() => {
@@ -144,28 +112,23 @@ const DeveloperCardStack = ({
         triggerSwipe("left");
       } else if (e.key === "ArrowUp") {
         triggerSwipe("up");
-      } else if (e.key === "ArrowDown") {
-        handleUndo();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [triggerSwipe, handleUndo]);
+  }, [triggerSwipe]);
 
   const fetchDevelopers = async () => {
-    if (storedDevs?.length > 0) {
-      setDevelopers(storedDevs);
-      return;
-    }
     try {
+      setIsLoading(true);
       const devs = await axios.get(BASE_URL + "/user/feed", {
         withCredentials: true,
       });
-      setDevelopers(devs?.data?.feedUsers);
-      dispatch(addDevs(devs?.data?.feedUsers));
+      dispatch(addDevs(devs?.data?.feedUsers || []));
     } catch (err) {
-      //handle error logic
       console.log(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -173,19 +136,22 @@ const DeveloperCardStack = ({
     fetchDevelopers();
   }, []);
 
-  if (!developers.length) {
+  if (isLoading) {
     return (
-      <div className="flex h-[600px] items-center justify-center text-white">
+      <div className="flex h-[600px] items-center justify-center text-white font-medium">
         Loading developers...
       </div>
     );
   }
 
-  // Derive top, middle, and back cards dynamically
-  const topDev = developers[currentIndex % developers?.length];
-  console.log("TopCard=>",topDev);
-  const middleDev = developers[(currentIndex + 1) % developers?.length];
-  const backDev = developers[(currentIndex + 2) % developers?.length];
+  if (!developers.length) {
+    return (
+      <div className="flex flex-col h-[500px] items-center justify-center text-white gap-3">
+        <p className="text-xl font-bold text-gray-300">No more developers found!</p>
+        <p className="text-sm text-gray-500">Check back later for new profiles.</p>
+      </div>
+    );
+  }
 
   // Drag End handler for touch & mouse drag gestures
   const handleDragEnd = async (event, info) => {
@@ -241,7 +207,7 @@ const DeveloperCardStack = ({
         {/* Back Card (Index 2 in stack) */}
         {backDev && (
           <motion.div
-            key={`back-${backDev.id}-${currentIndex + 2}`}
+            key={`back-${backDev._id || backDev.id}`}
             variants={cardVariants}
             initial="enter"
             animate="back"
@@ -256,9 +222,9 @@ const DeveloperCardStack = ({
         {/* Middle Card (Index 1 in stack) */}
         {middleDev && (
           <motion.div
-            key={`middle-${middleDev.id}-${currentIndex + 1}`}
+            key={`middle-${middleDev._id || middleDev.id}`}
             variants={cardVariants}
-            initial="enter"
+            initial={{ scale: 0.9, y: 32, opacity: 0.55 }}
             animate="middle"
             transition={SPRING}
             className="absolute inset-0 pointer-events-none"
@@ -271,7 +237,7 @@ const DeveloperCardStack = ({
         {/* Top Interactive Card (Index 0 in stack) */}
         {topDev && (
           <TopInteractiveCard
-            key={`top-${topDev.id}-${currentIndex}`}
+            key={`top-${topDev._id || topDev.id}`}
             developer={topDev}
             controls={topCardControls}
             x={x}
@@ -283,12 +249,9 @@ const DeveloperCardStack = ({
 
       {/* Swipe Control Buttons */}
       <SwipeButtons
-        onUndo={handleUndo}
         onIgnore={() => triggerSwipe("left")}
         onSuperLike={() => triggerSwipe("up")}
         onConnect={() => triggerSwipe("right")}
-        onBoost={handleBoost}
-        canUndo={history.length > 0}
       />
 
       {/* Responsive Hints / Bottom Tip */}
@@ -305,9 +268,6 @@ const DeveloperCardStack = ({
           <span className="px-2 py-0.5 rounded bg-[#141A30] border border-white/10 text-gray-300 font-bold">
             ↑
           </span>
-          <span className="px-2 py-0.5 rounded bg-[#141A30] border border-white/10 text-gray-300 font-bold">
-            ↓
-          </span>
         </div>
 
         {/* Mobile View Gesture hint */}
@@ -321,3 +281,5 @@ const DeveloperCardStack = ({
 };
 
 export default DeveloperCardStack;
+
+
