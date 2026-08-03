@@ -1,6 +1,7 @@
 import { BrowserRouter,Route,Routes } from "react-router-dom";
 import Body from "./components/Body";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import DeveloperCardStack from './components/DeveloperCardStack/DeveloperCardStack';
 import developers from "./utils/dummyDevs";
 import Profile from "./components/Profile/Profile";
@@ -22,7 +23,7 @@ function App() {
           <Route path="/requests" element={<ConnectionRequests/>}></Route>
           </Route>
           <Route path="/login" element={<Login/>}/>
-          
+          <Route path="/signup" element={<Signup/>}/>
         </Routes>
        </BrowserRouter>
     </div>  

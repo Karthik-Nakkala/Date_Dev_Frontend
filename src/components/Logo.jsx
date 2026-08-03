@@ -1,6 +1,6 @@
-const Logo = () => {
+const Logo = ({ subtitle }) => {
   return (
-    <div className="flex flex-col items-center  gap-3">
+    <div className="flex flex-col items-center gap-3">
 
       {/* Logo Icon */}
       <div
@@ -36,11 +36,17 @@ const Logo = () => {
         </span>
       </div>
 
-      <p className="text-gray-400 text-center lg:text-left text-base max-w-md">
-        Meet developers. Build teams.
-        <br />
-        Ship projects.
-      </p>
+      {subtitle ? (
+        <div className="text-gray-400 text-center lg:text-left text-base max-w-md">
+          {subtitle}
+        </div>
+      ) : (
+        <p className="text-gray-400 text-center lg:text-left text-base max-w-md">
+          Meet developers. Build teams.
+          <br />
+          Ship projects.
+        </p>
+      )}
 
     </div>
   );

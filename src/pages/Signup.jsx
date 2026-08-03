@@ -1,6 +1,6 @@
 import Logo from "../components/Logo";
 import FeatureItem from "../components/FeatureItem";
-import LoginCard from "../components/LoginCard";
+import SignupCard from "../components/SignupCard";
 import { FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
@@ -9,9 +9,10 @@ import {
   FaRocket,
   FaComments,
   FaTrophy,
+  FaBriefcase,
 } from "react-icons/fa";
 
-const Login = () => {
+const Signup = () => {
   const navigate = useNavigate();
 
   const featureItems = [
@@ -19,25 +20,31 @@ const Login = () => {
       id: 1,
       icon: <FaUsers />,
       title: "Find Developers",
-      description: "Meet your likely passioned",
+      description: "Meet your future teammates",
     },
     {
       id: 2,
       icon: <FaRocket />,
       title: "Build Together",
-      description: "Make together, Hack together",
+      description: "Create projects. Hack together",
     },
     {
       id: 3,
       icon: <FaComments />,
       title: "Chat & Connect",
-      description: "Instant chats, teams always connected.",
+      description: "Instant chats, meaningful connections",
     },
     {
       id: 4,
       icon: <FaTrophy />,
       title: "Grow Together",
-      description: "Better devs through shared learning.",
+      description: "Learn, share and grow together",
+    },
+    {
+      id: 5,
+      icon: <FaBriefcase />,
+      title: "Opportunities",
+      description: "Discover projects & career opportunities",
     },
   ];
 
@@ -46,18 +53,26 @@ const Login = () => {
       className="h-screen w-screen bg-[#050816] text-white overflow-hidden relative font-sans bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: "url('/programmer bg.png')" }}
     >
-      {/* Overlay for contrast */}
+      {/* Overlay for ideal contrast */}
       <div className="absolute inset-0 bg-[#050816]/40 backdrop-brightness-95 pointer-events-none" />
 
-      {/* Ambient Glows */}
+      {/* Background Ambient Glows */}
       <div className="absolute top-0 left-0 w-80 h-80 bg-purple-600/20 blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-pink-600/20 blur-[140px] pointer-events-none" />
 
-      {/* DESKTOP SINGLE FRAME LAYOUT */}
+      {/* DESKTOP SINGLE FRAME LAYOUT (lg:) */}
       <div className="hidden lg:grid lg:grid-cols-2 h-screen w-full relative z-10 p-4 xl:p-6 overflow-hidden">
-        {/* LEFT SIDE */}
+        {/* LEFT SIDE (Brand & Features) */}
         <div className="flex flex-col justify-center items-start pl-6 xl:pl-12 space-y-5 my-auto">
-          <Logo />
+          <Logo
+            subtitle={
+              <p className="text-gray-300 text-left text-xs xl:text-sm max-w-sm leading-snug">
+                Create your developer profile.
+                <br />
+                Connect. Collaborate. Build.
+              </p>
+            }
+          />
 
           <div className="flex flex-col items-start gap-2.5 pt-2 pl-2">
             {featureItems.map((item) => (
@@ -71,31 +86,31 @@ const Login = () => {
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* RIGHT SIDE (Signup Form) */}
         <div className="flex flex-col justify-center items-center relative h-full">
-          {/* Top Link */}
+          {/* Top Navigation Link */}
           <div className="absolute right-4 top-2 xl:right-8 z-20 flex items-center gap-1.5 text-gray-400 text-xs font-normal">
-            <span>New here?</span>
+            <span>Already have an account?</span>
             <button
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/login")}
               className="text-violet-400 hover:text-pink-400 font-medium transition cursor-pointer"
             >
-              Create an account
+              Login
             </button>
           </div>
 
-          {/* Login Card */}
+          {/* Signup Form Card */}
           <div className="w-full flex justify-center items-center my-auto">
-            <LoginCard />
+            <SignupCard />
           </div>
         </div>
       </div>
 
-      {/* MOBILE LAYOUT */}
+      {/* MOBILE & TABLET LAYOUT (< lg) */}
       <div className="lg:hidden min-h-screen bg-[#050816] flex flex-col px-4 sm:px-6 pt-4 pb-8 relative z-10 overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
             className="
             w-9
             h-9
@@ -116,24 +131,30 @@ const Login = () => {
           </button>
 
           <div className="text-xs text-gray-400 font-normal">
-            New here?{" "}
+            Already registered?{" "}
             <button
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/login")}
               className="text-violet-400 hover:text-pink-400 font-medium transition"
             >
-              Create an account
+              Login
             </button>
           </div>
         </div>
 
-        <Logo />
+        <Logo
+          subtitle={
+            <p className="text-gray-400 text-center text-xs">
+              Create your developer profile. Connect. Collaborate. Build.
+            </p>
+          }
+        />
 
-        <div className="relative z-10 mt-4 w-full flex justify-center">
-          <LoginCard />
+        <div className="relative z-10 mt-4 w-full flex justify-center pb-6">
+          <SignupCard />
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Signup;

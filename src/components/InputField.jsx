@@ -30,7 +30,7 @@ const InputField = ({
         )}
       </div>
 
-      <div className="h-12 rounded-xl border border-[#2B3048] bg-[#0B1020] flex items-center px-4" focus-within:border-violet-500="true" transition-all="true" duration-300="true">
+      <div className="h-12 rounded-xl border border-[#2B3048] bg-[#0B1020] flex items-center px-4 focus-within:border-violet-500 focus-within:ring-1 focus-within:ring-violet-500/30 transition-all duration-300">
 
         <div className="text-gray-400 text-xl">
           {icon}
