@@ -16,7 +16,7 @@ function App() {
        <BrowserRouter basename="/">
         <Routes>
           <Route path="/" element={<Body/>}>
-          <Route path="/feed" element={<DeveloperCardStack/>}></Route>
+          <Route index element={<DeveloperCardStack/>}></Route>
           <Route path="/profile" element={<Profile/>}></Route>
           <Route path="/profile-edit" element={<EditDeveloperProfileModal/>}></Route>
           <Route path="/connections" element={<Connections/>}></Route>
