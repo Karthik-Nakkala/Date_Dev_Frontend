@@ -8,34 +8,25 @@ import Profile from "./components/Profile/Profile";
 import EditDeveloperProfileModal from "./components/Profile/EditDeveloperProfileModal";
 import Connections from "./components/Connections";
 import ConnectionRequests from "./components/ConnectionRequests";
-import { useSelector } from "react-redux";
 
 function App() {
-  const user = useSelector((store) => store.user);
-
   return (
-    <BrowserRouter basename="/">
-      {!user ? (
-        <Landing />
-      ) : (
-        <div className="bg-[#070B18]">
-          <Routes>
-            <Route path="/" element={<Body />}>
-              <Route index element={<DeveloperCardStack />}></Route>
-              <Route path="/profile" element={<Profile />}></Route>
-              <Route
-                path="/profile-edit"
-                element={<EditDeveloperProfileModal />}
-              ></Route>
-              <Route path="/connections" element={<Connections />}></Route>
-              <Route path="/requests" element={<ConnectionRequests />}></Route>
-            </Route>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-          </Routes>
-        </div>
-      )}
-    </BrowserRouter>
+    <div className="bg-[#070B18] min-h-screen">
+      <BrowserRouter basename="/">
+        <Routes>
+          <Route path="/" element={<Body />}>
+            <Route index element={<DeveloperCardStack />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile-edit" element={<EditDeveloperProfileModal />} />
+            <Route path="/connections" element={<Connections />} />
+            <Route path="/requests" element={<ConnectionRequests />} />
+          </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/landing" element={<Landing />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 

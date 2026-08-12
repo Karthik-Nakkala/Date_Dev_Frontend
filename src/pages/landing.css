@@ -176,6 +176,7 @@
   border-radius: 50%;
   background: rgba(168, 85, 247, 0.55);
   z-index: 0;
+  pointer-events: none;
   animation: floatParticle 3s ease-in-out infinite alternate;
 }
 @keyframes floatParticle {
