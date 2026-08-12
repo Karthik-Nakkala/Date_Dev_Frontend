@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Body from "./pages/Body";
+import RootHandler from "./components/RootHandler";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Landing from "./pages/Landing";
@@ -14,12 +14,12 @@ function App() {
     <div className="bg-[#070B18] min-h-screen">
       <BrowserRouter basename="/">
         <Routes>
-          <Route path="/" element={<Body />}>
+          <Route path="/" element={<RootHandler />}>
             <Route index element={<DeveloperCardStack />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile-edit" element={<EditDeveloperProfileModal />} />
-            <Route path="/connections" element={<Connections />} />
-            <Route path="/requests" element={<ConnectionRequests />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="profile-edit" element={<EditDeveloperProfileModal />} />
+            <Route path="connections" element={<Connections />} />
+            <Route path="requests" element={<ConnectionRequests />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
