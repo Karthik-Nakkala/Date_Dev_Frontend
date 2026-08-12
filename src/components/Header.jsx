@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { FiSearch, FiPlus, FiBell, FiMenu } from "react-icons/fi";
+import { FiSearch, FiBell, FiMenu } from "react-icons/fi";
 import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
-import { PiLightningFill } from "react-icons/pi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import ProfileDrawer from "./SideNavbar";
+import ProfileDrawer from "./ProfileDrawer";
 
 const Header = () => {
   const user = useSelector((store) => store.user);
@@ -13,10 +12,6 @@ const Header = () => {
     <header className="w-full h-20 bg-[#070B18] border  flex items-center justify-between">
       {/* Left Section */}
       <div className="flex items-center h-full">
-        {/* Mobile Menu */}
-        <button className="lg:hidden text-white text-3xl px-2 lg:px-4">
-          <FiMenu />
-        </button>
 
         {/* Logo */}
         <div className="lg:w-[270px] h-full flex items-center lg:px-8">
@@ -59,51 +54,49 @@ const Header = () => {
       {/* Right Section */}
       <div className="flex items-center gap-5 px-6">
         {/* Messages */}
-        <Link to={'/connections'}><button className="hidden lg:flex relative w-12 h-11 rounded-xl border border-[#2A2E45] items-center justify-center hover:bg-[#10172C] transition">
+        <button className="hidden lg:flex relative w-12 h-11 rounded-xl border border-[#2A2E45] items-center justify-center hover:bg-[#10172C] transition">
           <HiOutlineChatBubbleLeftRight size={22} className="text-white" />
 
           <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-pink-600 text-[10px] text-white flex items-center justify-center font-semibold">
             2
           </span>
-        </button></Link>
+        </button>
 
         {/* Notifications */}
-        <Link to={'/feed'}>
-          <button className="relative w-12 h-11 rounded-xl lg:border border-[#2A2E45] flex items-center justify-center hover:bg-[#10172C] transition">
-            <FiBell size={30} lg:size={22} className="text-white" />
+        <button className="relative w-12 h-11 rounded-xl lg:border border-[#2A2E45] flex items-center justify-center hover:bg-[#10172C] transition">
+          <FiBell size={30} lg:size={22} className="text-white" />
 
-            <span className="lg:hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-pink-600 text-[10px] text-white items-center justify-center font-semibold" />
+          <span className="lg:hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-pink-600 text-[10px] text-white items-center justify-center font-semibold" />
 
-            <span className="hidden lg:flex absolute -top-1 -right-1 w-4 h-4 rounded-full bg-pink-600 text-[10px] text-white items-center justify-center font-semibold">
-              8
-            </span>
-          </button>
-        </Link>
+          <span className="hidden lg:flex absolute -top-1 -right-1 w-4 h-4 rounded-full bg-pink-600 text-[10px] text-white items-center justify-center font-semibold">
+            8
+          </span>
+        </button>
 
         {/* Profile */}
-          <div
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}
-          >
-            {user && (
-              <img
-                src={user?.photoUrl}
-                alt="profile"
-                className="w-10 h-10 rounded-full object-cover"
-              />
-            )}
-
-            {user && (
-              <span className="text-white text-md font-medium">
-                {user?.firstName}
-              </span>
-            )}
-
-            <ProfileDrawer
-              isOpen={profileDrawerOpen}
-              setIsOpen={setProfileDrawerOpen}
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => setProfileDrawerOpen(!profileDrawerOpen)}
+        >
+          {user && (
+            <img
+              src={user?.photoUrl}
+              alt="profile"
+              className="w-10 h-10 rounded-full object-cover"
             />
-          </div>
+          )}
+
+          {user && (
+            <span className="text-white text-md font-medium">
+              {user?.firstName}
+            </span>
+          )}
+
+          <ProfileDrawer
+            isOpen={profileDrawerOpen}
+            setIsOpen={setProfileDrawerOpen}
+          />
+        </div>
         {!user && (
           <span className="text-white text-md font-medium">
             <Link to={"/login"}>

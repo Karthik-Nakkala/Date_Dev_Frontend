@@ -1,9 +1,9 @@
 import { BrowserRouter,Route,Routes } from "react-router-dom";
-import Body from "./components/Body";
+import Body from "./pages/Body";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Landing from "./pages/Landing";
 import DeveloperCardStack from './components/DeveloperCardStack/DeveloperCardStack';
-import developers from "./utils/dummyDevs";
 import Profile from "./components/Profile/Profile";
 import EditDeveloperProfileModal from "./components/Profile/EditDeveloperProfileModal";
 import Connections from "./components/Connections";
@@ -24,6 +24,7 @@ function App() {
           </Route>
           <Route path="/login" element={<Login/>}/>
           <Route path="/signup" element={<Signup/>}/>
+          <Route path="/landing" element={<Landing/>}/>
         </Routes>
        </BrowserRouter>
     </div>  
