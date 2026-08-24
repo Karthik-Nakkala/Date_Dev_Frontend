@@ -1,20 +1,109 @@
 @import "tailwindcss";
 
-body{
-    background: #070B18;
+/* ── Box-sizing / link reset ──────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Design Tokens ────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --color-bg:        #070B18;
+  --color-surface:   #0B1020;
+  --color-surface2:  #0F1629;
+  --color-surface3:  #131829;
+
+  /* Borders */
+  --color-border:    #1E2640;
+  --color-border2:   #2A3050;
+
+  /* Primary gradient colors */
+  --color-violet:    #7C3AED;
+  --color-purple:    #A855F7;
+  --color-pink:      #EC4899;
+  --color-violet-lt: rgba(124, 58, 237, 0.15);
+  --color-pink-lt:   rgba(236, 72, 153, 0.12);
+
+  /* Gradient string */
+  --gradient-primary: linear-gradient(135deg, #7C3AED 0%, #A855F7 40%, #EC4899 100%);
+
+  /* Premium typography */
+  --font-display: 'Outfit', 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', 'Plus Jakarta Sans', sans-serif;
+
+  /* Radii */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-2xl:  24px;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  font-family: var(--font-body);
+  color: #E2E8F0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Display font utility ─────────────────────────────────── */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* ── Gradient text utility ────────────────────────────────── */
+.gradient-text-global {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Animations ───────────────────────────────────────────── */
 @keyframes fade {
-  from {
-    opacity: 0;
-    transform: translateY(25px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(25px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade {
   animation: fade 0.8s ease forwards;
+}
+
+/* Shimmer — used by .shimmer-text */
+@keyframes shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #7C3AED 0%,
+    #EC4899 30%,
+    #A855F7 60%,
+    #7C3AED 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Pulse glow — reusable */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
 }

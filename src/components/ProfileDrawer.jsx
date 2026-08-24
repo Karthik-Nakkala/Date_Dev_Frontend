@@ -77,6 +77,13 @@ const ProfileDrawer = ({ isOpen, setIsOpen }) => {
             </button>
           </Link>
 
+          <Link to={'/premium'}>
+            <button className="mt-2 flex w-full items-center gap-4 rounded-xl px-4 py-3 text-gray-300 transition hover:bg-violet-600/20 hover:text-violet-400">
+              <UserPlus size={20} />
+              <span>Premium</span>
+            </button>
+          </Link>
+
 
           <div className="my-5 border-t border-white/10" />
 

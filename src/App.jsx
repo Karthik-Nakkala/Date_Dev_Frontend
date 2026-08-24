@@ -8,6 +8,7 @@ import Profile from "./components/Profile/Profile";
 import EditDeveloperProfileModal from "./components/Profile/EditDeveloperProfileModal";
 import Connections from "./components/Connections";
 import ConnectionRequests from "./components/ConnectionRequests";
+import Premium from "./components/Premium";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="profile-edit" element={<EditDeveloperProfileModal />} />
             <Route path="connections" element={<Connections />} />
             <Route path="requests" element={<ConnectionRequests />} />
+            <Route path="/premium" element={<Premium/>}/>
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
