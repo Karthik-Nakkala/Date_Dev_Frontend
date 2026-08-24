@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiSearch, FiBell, FiMenu } from "react-icons/fi";
+import { FiSearch, FiBell } from "react-icons/fi";
 import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -9,7 +9,7 @@ const Header = () => {
   const user = useSelector((store) => store.user);
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
   return (
-    <header className="w-full h-20 bg-[#070B18] border  flex items-center justify-between">
+    <header className="w-full h-20 bg-[#070B18] border rounded-md border-gray-800 flex items-center justify-between">
       {/* Left Section */}
       <div className="flex items-center h-full">
 
