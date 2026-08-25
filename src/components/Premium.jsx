@@ -5,10 +5,13 @@ import { BASE_URL } from '../utils/constants';
 import PremiumSuccess from './PremiumSuccess';
 import { useSelector } from 'react-redux';
 
+
 const Premium = () => {
   const [activePlan, setActivePlan] = useState('gold');
 
-  const isPremiumfromGlobalState=useSelector(Store=>Store.user?.isPremium);
+  const isPremiumfromGlobalState=useSelector((store)=>store.user?.isPremium);
+
+
   const [premiumState,setPremiumState]=useState(isPremiumfromGlobalState);
 
   const plans = [

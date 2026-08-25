@@ -7,11 +7,14 @@ const userSlice=createSlice({
         addUser:(state,action)=>{
             return action.payload;
         },
+        addPremium:(state,action)=>{
+            state.isPremium=action.payload;
+        },
         removeUser:()=>{
             return null;
         }
     }
 });
 
-export const {addUser,removeUser}=userSlice.actions;
+export const {addUser,addPremium,removeUser}=userSlice.actions;
 export default userSlice.reducer;
