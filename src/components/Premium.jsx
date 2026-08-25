@@ -2,9 +2,14 @@ import { useState } from 'react';
 import { Check, Lock, ChevronDown, ChevronUp } from 'lucide-react';
 import axios from 'axios';
 import { BASE_URL } from '../utils/constants';
+import PremiumSuccess from './PremiumSuccess';
+import { useSelector } from 'react-redux';
 
 const Premium = () => {
   const [activePlan, setActivePlan] = useState('gold');
+
+  const isPremiumfromGlobalState=useSelector(Store=>Store.user?.isPremium);
+  const [premiumState,setPremiumState]=useState(isPremiumfromGlobalState);
 
   const plans = [
     {
@@ -112,6 +117,14 @@ const Premium = () => {
     }
   ];
 
+  const verifyPremium=async ()=>{
+    const premiumTest=await axios.get(BASE_URL+'/premium/verify',{
+        withCredentials:true
+    });
+    const {isPremium}=premiumTest.data;
+    setPremiumState(isPremium);
+  }
+
   async function handleSubscription(type){
     const order=await axios.post(BASE_URL+'/payment/create',{subscriptionType:type},
     {withCredentials:true}
@@ -131,12 +144,13 @@ const Premium = () => {
         theme: {
           color: '#F37254'
         },
+        handler:verifyPremium,
       };
       const rzp = new window.Razorpay(options);
       rzp.open();
   }
 
-  return (
+  return premiumState ? (<PremiumSuccess/>) : (
     <div className="min-h-screen bg-[#070B18] text-slate-200 flex flex-col items-center justify-center  font-sans selection:bg-purple-500/30">
       
       {/* Container with a subtle border */}
