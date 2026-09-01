@@ -3,8 +3,10 @@ import {
   MessageSquare,
   MoreHorizontal,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Connection = ({ connection }) => {
+  console.log("Here is your connection details=>",connection);
   return (
     <div className="group flex items-center rounded-2xl border border-zinc-800 bg-[#0c1018] px-5 py-3.5 transition-all duration-300 hover:border-violet-600/60 hover:bg-[#101522] hover:shadow-[0_0_35px_rgba(139,92,246,0.08)]">
       {/* LEFT */}
@@ -60,9 +62,9 @@ const Connection = ({ connection }) => {
       <div className="ml-auto flex items-center gap-3">
 
         {/* Message Button */}
-        <button className="flex h-9 w-9 items-center justify-center rounded-lg border border-violet-600/40 bg-violet-600/10 text-violet-400 transition hover:border-violet-500 hover:bg-violet-600 hover:text-white">
+        <Link to={`/chat/${connection._id}`}><button className="flex h-9 w-9 items-center justify-center rounded-lg border border-violet-600/40 bg-violet-600/10 text-violet-400 transition hover:border-violet-500 hover:bg-violet-600 hover:text-white">
           <MessageSquare size={18} />
-        </button>
+        </button></Link>
 
         {/* Menu */}
         <button className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-800 bg-[#121824] text-zinc-400 transition hover:border-zinc-700 hover:bg-[#171f2e] hover:text-white">

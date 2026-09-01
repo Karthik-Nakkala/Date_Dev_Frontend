@@ -9,6 +9,7 @@ import EditDeveloperProfileModal from "./components/Profile/EditDeveloperProfile
 import Connections from "./components/Connections";
 import ConnectionRequests from "./components/ConnectionRequests";
 import Premium from "./components/Premium";
+import Chat from "./components/Chat";
 
 function App() {
   return (
@@ -22,7 +23,9 @@ function App() {
             <Route path="connections" element={<Connections />} />
             <Route path="requests" element={<ConnectionRequests />} />
             <Route path="/premium" element={<Premium/>}/>
+            <Route path="/chat/:targetedUserId" element={<Chat/>}/>
           </Route>
+          
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/landing" element={<Landing />} />
