@@ -37,8 +37,8 @@ const SignupCard = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("");
-
   const [photoUrl, setPhotoUrl] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [skills, setSkills] = useState([]);
   const [skillInput, setSkillInput] = useState("");
   const [location, setLocation] = useState("");
@@ -97,48 +97,57 @@ const SignupCard = () => {
     setStep(3);
   };
 
-  // Final Submit Handler
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
+  
+  try {
+    // 1. Create an instance of FormData
+    const formData = new FormData();
 
-    setLoading(true);
-    try {
-      const payload = {
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        emailId: emailId.trim(),
-        password: password,
-        age: age ? Number(age) : undefined,
-        gender: gender || undefined,
-        photoUrl: photoUrl.trim() || undefined,
-        skills: skills.length > 0 ? skills : undefined,
-        location: location.trim() || undefined,
-        role: role || undefined,
-        about: bio.trim() || undefined,
-        projects: projects.trim() || undefined,
-        hackathons: hackathons.trim() || undefined,
-        openToWork: openForWork === "Yes",
-      };
+    // 2. Append all your normal text fields to the form data array
+    formData.append("firstName", firstName.trim());
+    formData.append("lastName", lastName.trim());
+    formData.append("emailId", emailId.trim());
+    formData.append("password", password);
+    if (age) formData.append("age", Number(age));
+    if (gender) formData.append("gender", gender);
+    if (skills.length > 0) formData.append("skills", JSON.stringify(skills)); // Arrays must be stringified in FormData
+    if (location) formData.append("location", location.trim());
+    if (role) formData.append("role", role);
+    if (bio) formData.append("about", bio.trim());
+    if (projects) formData.append("projects", projects.trim());
+    if (hackathons) formData.append("hackathons", hackathons.trim());
+    formData.append("openToWork", openForWork === "Yes");
 
-      const res = await axios.post(BASE_URL + "/signup", payload, {
-        withCredentials: true,
-      });
-
-      if (res?.data?.data) {
-        dispatch(addUser(res.data.data));
-      }
-      navigate("/");
-    } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-          err?.response?.data ||
-          "Signup failed. Please try again."
-      );
-    } finally {
-      setLoading(false);
+    // 3. Attach either the raw Local File OR the Typed Text URL string
+    if (imageFile) {
+      formData.append("profileImage", imageFile); // Matches upload.single('profileImage') on backend
+    } else if (photoUrl) {
+      formData.append("photoUrl", photoUrl.trim());
     }
-  };
+
+    // 4. Send the request using FormData format
+    const res = await axios.post(BASE_URL + "/signup", formData, {
+      withCredentials: true,
+    });
+
+    if (res?.data?.data) {
+      dispatch(addUser(res.data.data));
+    }
+    navigate("/");
+  } catch (err) {
+    setError(
+      err?.response?.data?.message ||
+        err?.response?.data ||
+        "Signup failed. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div
@@ -390,23 +399,59 @@ const SignupCard = () => {
             </p>
           </div>
 
-          {/* Photo URL */}
-          <div>
-            <label className="text-white font-medium text-xs block mb-1">
-              Photo URL
-            </label>
-            <div className="h-10.5 rounded-xl border border-[#2B3048] bg-[#0B1020] flex items-center px-3.5 focus-within:border-violet-500 focus-within:ring-1 focus-within:ring-violet-500/30 transition-all">
-              <FiLink className="text-gray-400 text-base mr-2.5 shrink-0" />
-              <input
-                type="url"
-                placeholder="https://your-photo-url.com"
-                value={photoUrl}
-                onChange={(e) => setPhotoUrl(e.target.value)}
-                className="flex-1 bg-transparent outline-none text-white text-xs sm:text-sm placeholder:text-gray-500"
-              />
-              <FiCloud className="text-gray-400 text-base ml-2 shrink-0" />
-            </div>
-          </div>
+{/* Profile Photo Selection (URL or File Upload) */}
+<div className="flex flex-col gap-4">
+  
+  {/* Option 1: Paste Photo URL */}
+  <div>
+    <label className={`font-medium text-xs block mb-1 ${imageFile ? 'text-gray-500' : 'text-white'}`}>
+      Option 1: Photo URL {imageFile && <span className="text-gray-500 text-[10px] ml-1">(Disabled because a file is selected)</span>}
+    </label>
+    <div className={`h-10.5 rounded-xl border bg-[#0B1020] flex items-center px-3.5 transition-all ${
+      imageFile 
+        ? 'border-gray-800 opacity-40 cursor-not-allowed' 
+        : 'border-[#2B3048] focus-within:border-violet-500 focus-within:ring-1 focus-within:ring-violet-500/30'
+    }`}>
+      <FiLink className="text-gray-400 text-base mr-2.5 shrink-0" />
+      <input
+        type="url"
+        placeholder="https://your-photo-url.com"
+        value={photoUrl}
+        disabled={!!imageFile}
+        onChange={(e) => setPhotoUrl(e.target.value)}
+        className="flex-1 bg-transparent outline-none text-white text-xs sm:text-sm placeholder:text-gray-500 disabled:cursor-not-allowed"
+      />
+      <FiCloud className="text-gray-400 text-base ml-2 shrink-0" />
+    </div>
+  </div>
+
+  {/* Option 2: Upload File From Device */}
+  <div>
+    <label className={`font-medium text-xs block mb-1 ${photoUrl ? 'text-gray-500' : 'text-white'}`}>
+      Option 2: Or Upload from Device (JPG, JPEG, PNG) {photoUrl && <span className="text-gray-500 text-[10px] ml-1">(Disabled because a URL is typed)</span>}
+    </label>
+    <div className={`h-10.5 rounded-xl border bg-[#0B1020] flex items-center px-3.5 transition-all ${
+      photoUrl 
+        ? 'border-gray-800 opacity-40 cursor-not-allowed' 
+        : 'border-[#2B3048] focus-within:border-violet-500 focus-within:ring-1 focus-within:ring-violet-500/30'
+    }`}>
+      <FiCloud className="text-gray-400 text-base mr-2.5 shrink-0" />
+      <input
+        type="file"
+        accept="image/png, image/jpeg, image/jpg"
+        disabled={!!photoUrl}
+        onChange={(e) => setImageFile(e.target.files[0])}
+        className="flex-1 bg-transparent outline-none text-white text-xs sm:text-sm file:hidden cursor-pointer disabled:cursor-not-allowed"
+      />
+      {imageFile && (
+        <span className="text-xs text-violet-400 truncate max-w-[150px] font-medium">
+          {imageFile.name}
+        </span>
+      )}
+    </div>
+  </div>
+
+</div>
 
           {/* Skills */}
           <div>
