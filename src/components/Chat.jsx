@@ -9,15 +9,14 @@ import { BASE_URL } from '../utils/constants';
 const Chat = () => {
   const {targetedUserId}=useParams();
   const loginUserId=useSelector((store)=>store.user?._id);
-  console.log("loginUserId=>",loginUserId)
   const [sendingMessage,setSendingMessage]=useState('');
-  const partner = {
-    name: 'Ananya Sharma',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256',
+  const [partner,setPartner] = useState({
+    name: '',
+    avatar: '',
     status: 'Online',
     role: 'Full Stack Developer @ DevCrew',
-    about: 'Passionate about building scalable web apps and delightful user experiences.',
-    skills: ['JavaScript', 'React', 'Node.js', 'MongoDB', 'Tailwind CSS', 'Socket.io'],
+    about: '',
+    skills: [],
     mutualConnections: [
       'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=128',
       'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=128',
@@ -29,7 +28,7 @@ const Chat = () => {
       name: 'DevConnect Group',
       members: 28
     }
-  };
+  });
 
   const [mockMessages,setMockMessages] = useState([]);
 
@@ -42,7 +41,16 @@ const Chat = () => {
       });
 
       const structuredPreviousChats = [];
-      previousChats.data[0].messages.forEach(msg => {
+      const {name,avatar,skills,about,role}=previousChats.data.targetedUser;
+      setPartner((prevPartner)=>({
+        ...prevPartner,
+        name:name,
+        avatar: avatar,
+        skills: skills,
+        about: about,
+        role: role,
+      }));
+      previousChats.data.chats.messages.forEach(msg => {
         if(msg.senderId._id.toString()===loginUserId.toString()){
           structuredPreviousChats.push({
                 id: msg._id,
