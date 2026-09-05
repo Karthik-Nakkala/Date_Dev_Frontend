@@ -116,7 +116,7 @@ const handleSubmit = async (e) => {
     if (skills.length > 0) formData.append("skills", JSON.stringify(skills)); // Arrays must be stringified in FormData
     if (location) formData.append("location", location.trim());
     if (role) formData.append("role", role);
-    if (bio) formData.append("about", bio.trim());
+    if (bio) formData.append("bio", bio.trim());
     if (projects) formData.append("projects", projects.trim());
     if (hackathons) formData.append("hackathons", hackathons.trim());
     formData.append("openToWork", openForWork === "Yes");
